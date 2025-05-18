@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "Покупка завершена";
+    var change = ViewBag.Change as Dictionary<int, int>;
+}
+
+<h2>Спасибо за вашу покупку</h2>
+
+<div class="alert alert-success">
+    <p><strong>Вы получите сдачу:</strong></p>
+    <ul>
+        @foreach (var coin in change.OrderByDescending(c => c.Key))
+        {
+            <li>@coin.Value × @coin.Key ₽</li>
+        }
+    </ul>
+    <p><strong>Итого: @change.Sum(c => c.Key * c.Value) ₽</strong></p>
+</div>
+
+<div class="mt-4">
+    <a asp-controller="Catalog" asp-action="Index" class="btn btn-primary">
+        Каталог напитков
+    </a>
+</div>

@@ -1,0 +1,89 @@
+@model testmvcapp.ViewModels.CartViewModel
+
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<h1>Корзина</h1>
+
+@if (Model.CartItems.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Drink</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                var drinkTotal = item.Drink.Price * item.Quantity;
+                <tr>
+                    <td>
+                        <a class="a-cleanup" asp-controller="Catalog" asp-action="Details" asp-route-id="@item.Id"><img
+                                src="@item.Drink.ImagePath" style="height: 4em"></a>
+                    </td>
+                    <td>
+                        <a class="a-cleanup" asp-controller="Catalog" asp-action="Details"
+                            asp-route-id="@item.Id">@item.Drink.Name</a>
+                    </td>
+                    <td>
+                        @drinkTotal.ToString("c")
+                    </td>
+                    <td>
+                        <a asp-controller="Cart" asp-action="ReduceQuantity" asp-route-id="@item.Drink.Id"><i
+                                class="fa-solid fa-minus"></i></a>
+                        <span class="" badge badge-pill badge-dark"">@item.Quantity</span>
+                        <a asp-controller="Cart" asp-action="IncreaseQuantity" asp-route-id="@item.Drink.Id"><i
+                                class="fa-solid fa-plus"></i></a>
+                    </td>
+                    <td>
+                        <a asp-controller="Cart" asp-action="RemoveFromCart" asp-route-id="@item.Drink.Id"
+                            class="text-danger"><i class="fa-solid fa-xmark"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td></td>
+                <td class="text-right">
+                    <strong>Total:</strong>
+                </td>
+                <td>
+                    <strong>@Model.Total.ToString("c")</strong>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a asp-controller="Catalog" asp-action="Index" class="btn btn-warning">
+            <i class="fa-solid fa-arrow-left"></i> В каталог
+        </a>
+
+        <div class="d-flex">
+            <a asp-controller="Payment" asp-action="Index" class="btn btn-success me-3">
+                Оплатить <i class="fa-solid fa-angles-right"></i>
+            </a>
+
+            <a asp-controller="Cart" asp-action="ClearCart" class="btn btn-danger">
+                <i class="fa-solid fa-trash-can"></i> Очистить корзину
+            </a>
+        </div>
+    </div>
+
+}
+else
+{
+    <h3 class="text-center">Корзина пуста</h3>
+    <a asp-controller="Catalog" asp-action="Index" class="btn btn-warning">
+        <i class="fa-solid fa-arrow-left"></i> В каталог
+    </a>
+}

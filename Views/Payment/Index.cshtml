@@ -1,0 +1,61 @@
+@using testmvcapp.ViewModels
+@{
+    ViewData["Title"] = "Оплата";
+}
+<h2>Оплата заказа</h2>
+
+<div style="padding-bottom: 20px;">
+    <form method="post" asp-action="Pay">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Номинал</th>
+                    <th>Кол-во</th>
+                    <th>Управление</th>
+                    <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var denom in Model.Denominations)
+                {
+                    <tr>
+                        <td>@denom ₽</td>
+                        <td>
+                            <input type="number" name="insertedCoins[@denom]" id="qty-@denom" value="0" min="0"
+                                class="form-control form-control-sm qty-input" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="adjustQty(@denom, -1)">-</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"
+                                onclick="adjustQty(@denom, 1)">+</button>
+                        </td>
+                        <td><span id="sum-@denom">0 ₽</span></td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Всего внесено:</strong></td>
+                    <td><span id="totalSum">0 ₽</span></td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-end"><strong>Сумма заказа:</strong></td>
+                    <td>@Model.TotalAmount ₽</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <button type="submit" id="payBtn" class="btn btn-danger" disabled>Недостаточно средств</button>
+    </form>
+</div>
+<a asp-controller="Cart" asp-action="Index" class="btn btn-secondary">Вернуться</a>
+
+@section Scripts {
+    <script src="~/js/paymentIndex.js"></script>
+    <script>
+        const totalPrice = @Model.TotalAmount;
+        const denominations = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Denominations));
+        setupPaymentScript(totalPrice, denominations);
+    </script>
+}

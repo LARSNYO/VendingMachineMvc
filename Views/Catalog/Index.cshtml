@@ -1,0 +1,88 @@
+@model testmvcapp.ViewModels.DrinkFilterViewModel
+
+@{
+    ViewData["Title"] = "Каталог напитков";
+}
+
+<h2 class="my-4">Газированные напитки</h2>
+
+
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+    <!-- Форма фильтра -->
+    <form asp-action="Index" method="get" class="d-flex flex-wrap align-items-center gap-2">
+        <select id="brandSelect" name="selectedBrandId" class="form-select form-select-sm w-auto">
+            <option value="">--Все бренды--</option>
+            @foreach (var brand in Model.Brands)
+            {
+                <option value="@brand.Value" selected="@(brand.Selected ? "selected" : null)">
+                    @brand.Text
+                </option>
+            }
+        </select>
+
+        <div>
+            <label>Стоимость: <span id="sliderValue"></span></label>
+            <div style="display: flex; justify-content: space-between;">
+                <span>@Model.MinAvailablePrice.ToString("c")</span>
+                <span>@Model.MaxAvailablePrice.ToString("c")</span>
+            </div>
+            <input 
+            type="range" 
+            name="minPrice" 
+            min="@Model.MinAvailablePrice"
+            max="@Model.MaxAvailablePrice"
+            step="10"
+            value="@Model.MinAvailablePrice"
+            oninput="document.getElementById('sliderValue').innerText = this.value" style="width: 250px;"/>
+        </div>
+
+        <input type="submit" value="Фильтр" class="btn btn-primary btn-sm" />
+        <a asp-action="Index" class="btn btn-secondary btn-sm">Сброс</a>
+    </form>
+
+    <!-- Кнопки справа -->
+    <div class="d-flex flex-column align-items-end gap-3">
+        <a href="#" class="btn btn-secondary btn-md px-4">
+            <i class="fa-solid fa-file-import"></i> Импорт
+        </a>
+        <a asp-controller="Cart" asp-action="Index" class="btn btn-success btn-md px-4">
+            <i class="fa-solid fa-check-to-slot"></i> Выбрано: @Model.SelectedCount
+        </a>
+    </div>
+</div>
+
+<!--Каталог напитков-->
+<div class="row">
+    @foreach (var drink in Model.Drinks)
+    {
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="@drink.ImagePath" class="card-img-top card-img-custom" alt="@drink.Name">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@drink.Name</h5>
+                    <h5 class="card-title">@drink.Quantity</h5>
+                    <p class="mt-auto fw-bold text-primary fs-5">@drink.Price.ToString("c")</p>
+                    @if (drink.Quantity == 0)
+                    {
+                        <div class="btn btn-outline-danger btn-sm mt-2 disabled">
+                            <i class="fa-solid fa-ban"></i> Закончился
+                        </div>
+                    }
+                    else if (Model.SelectedDrinkIds.Contains(drink.Id))
+                    {
+                        <a asp-controller="Cart" asp-action="RemoveFromCartInCatalog" asp-route-id="@drink.Id"
+                            class="btn btn-success btn-sm mt-2">
+                            <i class="fa-solid fa-check"></i> Выбрано </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-id="@drink.Id"
+                            class="btn btn-outline-success btn-sm mt-2">
+                            <i class="fa-solid fa-cart-plus"></i> Выбрать
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
