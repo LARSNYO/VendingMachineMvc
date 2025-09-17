@@ -3,13 +3,13 @@ version: '3.9'
 services:
   postgres:
     image: postgres:latest
-    container_name: test_postgres_container
+    container_name: vendingmachinemvc
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: testdb
+      POSTGRES_DB: db_mvc
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
 volumes:
