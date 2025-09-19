@@ -38,6 +38,20 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Coins">Список монеток</a>
                         </li>
                     </ul>
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="nav-item">
+                            <form asp-area="Identity" asp-page="/Account/Logout" method=post class="form-inline">
+                                <button type="submit" class="btn btn-link nav-link">Logout</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                        </li>
+                    }
                 </div>
             </div>
         </nav>
