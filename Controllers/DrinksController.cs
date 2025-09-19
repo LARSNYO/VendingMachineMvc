@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace testmvcapp.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class DrinksController : Controller
 {
     private readonly IDrinkService _drinkService;
@@ -18,7 +18,6 @@ public class DrinksController : Controller
         _drinkService = drinkService;
         _brandService = brandService;
     }
-
 
     [AllowAnonymous]
     // GET: Drinks

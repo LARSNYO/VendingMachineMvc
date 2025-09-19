@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using testmvcapp.Services.Interfaces;
 using testmvcapp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+
 namespace testmvcapp.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class CoinsController : Controller
 {
     private readonly ICoinService _coinService;
@@ -13,6 +16,7 @@ public class CoinsController : Controller
     }
 
     // GET: Coins
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         var coins = await _coinService.GetCoinsAsync();

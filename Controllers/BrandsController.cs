@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using testmvcapp.Services.Interfaces;
 using testmvcapp.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+
 namespace testmvcapp.Controllers;
 
+[Authorize(Roles="Admin")]
 public class BrandsController : Controller
 {
     private readonly IBrandService _brandService;
@@ -13,6 +16,7 @@ public class BrandsController : Controller
     }
 
     // GET: Brands
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
         var brands = await _brandService.GetBrandsAsync();
