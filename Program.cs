@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using testmvcapp.Data;
 using testmvcapp.Repositories;
@@ -7,11 +8,30 @@ using testmvcapp.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews()
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
 
 builder.Services.AddDbContext<TestDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(opt =>
+{
+    opt.SignIn.RequireConfirmedAccount = true;
+    opt.Password.RequireNonAlphanumeric = false;
+    opt.Password.RequiredLength = 4;
+})
+    .AddEntityFrameworkStores<TestDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.LoginPath = "/Identity/Account/Login";
+    opt.AccessDeniedPath = "/Identity/Account/AccessDenied";
+});
+
 
 builder.Services.AddHttpContextAccessor();
 
@@ -49,7 +69,8 @@ if (args.Contains("seed"))
             var context = services.GetRequiredService<TestDbContext>();
 
             context.Database.Migrate();
-            DbInitializer.DbInitialize(context);
+            await DbSeeder.DbInitialize(context);
+            await DbSeeder.SeedAdminAsync(services);
         }
         catch (Exception ex)
         {
@@ -60,8 +81,13 @@ if (args.Contains("seed"))
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseAuthorization();
+
 app.UseSession();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapRazorPages();
 app.MapStaticAssets();
 app.MapControllerRoute(
     name: "default",
