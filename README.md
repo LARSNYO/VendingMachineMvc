@@ -16,7 +16,7 @@ ORM: Entity Framework
 Чтобы запустить проект:
 1. docker compose up -d
 2. dotnet ef database update
-3. dotnet run (если добавить агрумент -- seed, то БД заполниться начальными данными)
+3. dotnet run (если добавить агрумент -- seed, то БД заполнится начальными данными)
 
 
 
