@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using testmvcapp.Models;
 
 namespace testmvcapp.Data;
 
-public class TestDbContext : DbContext
+public class TestDbContext : IdentityDbContext<IdentityUser>
 {
     public TestDbContext(DbContextOptions<TestDbContext> options) : base(options)
     { }
@@ -12,3 +14,5 @@ public class TestDbContext : DbContext
     public DbSet<Coin> Coins { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
 }
+
+
